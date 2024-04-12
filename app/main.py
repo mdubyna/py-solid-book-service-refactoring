@@ -1,52 +1,68 @@
-import json
-import xml.etree.ElementTree as ET
+from app.book_service.book import Book
+from app.book_service.display_types import (
+    DisplayProcessor,
+    ConsoleDisplayProcessor,
+    ReverseDisplayProcessor
+
+)
+from app.book_service.print_book_types import (
+    PrintProcessor,
+    ConsolePrintProcessor,
+    ReversePrintProcessor
+)
+from app.book_service.serializers import (
+    SerializeProcessor,
+    JSONSerializeProcessor,
+    XMLSerializeProcessor
+)
 
 
-class Book:
-    def __init__(self, title: str, content: str):
-        self.title = title
-        self.content = content
+def create_display_processor(display_type: str) -> DisplayProcessor:
+    if display_type == "console":
+        return ConsoleDisplayProcessor()
+    elif display_type == "reverse":
+        return ReverseDisplayProcessor()
+    else:
+        raise ValueError(f"Unknown display type: {display_type}")
 
-    def display(self, display_type: str) -> None:
-        if display_type == "console":
-            print(self.content)
-        elif display_type == "reverse":
-            print(self.content[::-1])
-        else:
-            raise ValueError(f"Unknown display type: {display_type}")
 
-    def print_book(self, print_type: str) -> None:
-        if print_type == "console":
-            print(f"Printing the book: {self.title}...")
-            print(self.content)
-        elif print_type == "reverse":
-            print(f"Printing the book in reverse: {self.title}...")
-            print(self.content[::-1])
-        else:
-            raise ValueError(f"Unknown print type: {print_type}")
+def create_print_processor(print_type: str) -> PrintProcessor:
+    if print_type == "console":
+        return ConsolePrintProcessor()
+    elif print_type == "reverse":
+        return ReversePrintProcessor()
+    else:
+        raise ValueError(f"Unknown print type: {print_type}")
 
-    def serialize(self, serialize_type: str) -> str:
-        if serialize_type == "json":
-            return json.dumps({"title": self.title, "content": self.content})
-        elif serialize_type == "xml":
-            root = ET.Element("book")
-            title = ET.SubElement(root, "title")
-            title.text = self.title
-            content = ET.SubElement(root, "content")
-            content.text = self.content
-            return ET.tostring(root, encoding="unicode")
-        else:
-            raise ValueError(f"Unknown serialize type: {serialize_type}")
+
+def create_serialize_processor(serialize_type: str) -> SerializeProcessor:
+    if serialize_type == "json":
+        return JSONSerializeProcessor()
+    elif serialize_type == "xml":
+        return XMLSerializeProcessor()
+    else:
+        raise ValueError(f"Unknown serialize type: {serialize_type}")
 
 
 def main(book: Book, commands: list[tuple[str, str]]) -> None | str:
     for cmd, method_type in commands:
         if cmd == "display":
-            book.display(method_type)
+            display_processor = create_display_processor(method_type)
+            display_processor.display(
+                content=book.content
+            )
         elif cmd == "print":
-            book.print_book(method_type)
+            print_processor = create_print_processor(method_type)
+            print_processor.print_book(
+                title=book.title,
+                content=book.content
+            )
         elif cmd == "serialize":
-            return book.serialize(method_type)
+            serialize_processor = create_serialize_processor(method_type)
+            return serialize_processor.serialize(
+                title=book.title,
+                content=book.content
+            )
 
 
 if __name__ == "__main__":
