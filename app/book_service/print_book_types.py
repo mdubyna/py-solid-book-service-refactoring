@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class PrintProcessor(ABC):
+
     @staticmethod
     @abstractmethod
     def print_book(title: str, content: str) -> None:
@@ -9,6 +10,7 @@ class PrintProcessor(ABC):
 
 
 class ConsolePrintProcessor(PrintProcessor):
+
     @staticmethod
     def print_book(title: str, content: str) -> None:
         print(f"Printing the book: {title}...")
@@ -16,6 +18,7 @@ class ConsolePrintProcessor(PrintProcessor):
 
 
 class ReversePrintProcessor(PrintProcessor):
+
     @staticmethod
     def print_book(title: str, content: str) -> None:
         print(f"Printing the book in reverse: {title}...")

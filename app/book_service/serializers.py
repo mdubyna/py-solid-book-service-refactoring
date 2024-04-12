@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 
 class SerializeProcessor(ABC):
+
     @staticmethod
     @abstractmethod
     def serialize(title: str, content: str) -> str:
@@ -11,12 +12,14 @@ class SerializeProcessor(ABC):
 
 
 class JSONSerializeProcessor(SerializeProcessor):
+
     @staticmethod
     def serialize(title: str, content: str) -> str:
         return json.dumps({"title": title, "content": content})
 
 
 class XMLSerializeProcessor(SerializeProcessor):
+
     @staticmethod
     def serialize(title: str, content: str) -> str:
         root = ElementTree.Element("book_service")
